@@ -12,6 +12,7 @@ interface DocumentPreviewProps {
     type: string;
     content?: string;
     status: string;
+    signatureData?: string | null;
   };
   showDetailedPreview?: boolean;
 }
@@ -117,13 +118,24 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
         
         {document.status === 'signed' && (
           <div className="mt-8 pt-4 border-t">
-            <div className="flex items-center justify-center text-green-600">
-              <Check className="h-5 w-5 mr-2" />
-              <span className="font-medium">Documento Assinado Digitalmente</span>
+            <div className="flex flex-col items-center justify-center">
+              <div className="flex items-center text-green-600 mb-2">
+                <Check className="h-5 w-5 mr-2" />
+                <span className="font-medium">Documento Assinado Digitalmente</span>
+              </div>
+              {document.signatureData && (
+                <div className="mb-4">
+                  <img 
+                    src={document.signatureData} 
+                    alt="Assinatura Digital" 
+                    className="max-h-20 object-contain"
+                  />
+                </div>
+              )}
+              <p className="text-center text-xs text-gray-500">
+                Assinado em {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
+              </p>
             </div>
-            <p className="text-center text-xs text-gray-500 mt-1">
-              Assinado em {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
-            </p>
           </div>
         )}
       </div>

@@ -26,6 +26,7 @@ import { toast } from "@/hooks/use-toast";
 import { Check, Download, Eye, FileText } from "lucide-react";
 import { generatePDF, downloadPDF, downloadFileFromURL } from "@/lib/pdf-service";
 import DocumentPreview from "@/components/DocumentPreview";
+import { SignatureModal } from "@/components/SignatureModal";
 
 // Dados de exemplo para documentos específicos
 const mockDocumentDetails = {
@@ -62,6 +63,8 @@ const DocumentView = () => {
   const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
+  const [showSignatureModal, setShowSignatureModal] = useState(false);
+  const [signatureData, setSignatureData] = useState<string | null>(null);
   
   // Verificar se o documento existe
   const documentExists = mockDocumentDetails[numId as keyof typeof mockDocumentDetails];
@@ -142,7 +145,12 @@ const DocumentView = () => {
   };
 
   const handleSign = async () => {
+    setShowSignatureModal(true);
+  };
+
+  const handleSaveSignature = async (signatureDataUrl: string) => {
     setSigning(true);
+    setSignatureData(signatureDataUrl);
     
     try {
       // Simulação de assinatura - em uma implementação real este seria uma chamada de API
@@ -229,38 +237,15 @@ const DocumentView = () => {
               </DialogContent>
             </Dialog>
             
-            {documentStatus === "pending" ? (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button className="flex items-center">
-                    <Check className="h-4 w-4 mr-2" /> Assinar
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Confirmar assinatura</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Você está prestes a assinar digitalmente "{document.title}". Esta ação não pode ser desfeita.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction disabled={signing} onClick={handleSign}>
-                      {signing ? "Assinando..." : "Confirmar Assinatura"}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            ) : (
-              <Button 
-                className="flex items-center"
-                onClick={handleDownloadPDF}
-                disabled={pdfLoading}
-              >
-                <Download className="h-4 w-4 mr-2" /> 
-                {pdfLoading ? "Gerando PDF..." : "Baixar"}
+            {documentStatus === "pending" && (
+              <Button className="flex items-center" onClick={handleSign}>
+                <Check className="h-4 w-4 mr-2" /> Assinar
               </Button>
             )}
+            
+            <Button variant="outline" onClick={handleDownloadPDF} disabled={pdfLoading}>
+              <Download className="h-4 w-4 mr-2" /> Baixar
+            </Button>
           </div>
         </div>
         
@@ -305,7 +290,8 @@ const DocumentView = () => {
             <DocumentPreview 
               document={{
                 ...document,
-                status: documentStatus
+                status: documentStatus,
+                signatureData: signatureData
               }}
             />
           )}
@@ -342,6 +328,13 @@ const DocumentView = () => {
             )}
           </div>
         </div>
+
+        {/* Modal de Assinatura */}
+        <SignatureModal
+          isOpen={showSignatureModal}
+          onClose={() => setShowSignatureModal(false)}
+          onSave={handleSaveSignature}
+        />
       </div>
     </AppLayout>
   );

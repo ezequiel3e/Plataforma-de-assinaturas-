@@ -7,8 +7,12 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "::",
-    port: 8080,
+    host: "localhost",
+    port: 3000,
+    strictPort: true,
+    hmr: {
+      timeout: 5000
+    }
   },
   plugins: [react()].filter(Boolean),
   resolve: {
@@ -17,7 +21,8 @@ export default defineConfig(({ mode }) => ({
     }
   },
   optimizeDeps: {
-    include: ['jspdf', 'html2canvas']
+    include: ['jspdf', 'html2canvas'],
+    force: true
   },
   build: {
     commonjsOptions: {

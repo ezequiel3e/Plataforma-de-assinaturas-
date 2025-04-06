@@ -1,10 +1,19 @@
-
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Clock, Check, FileText, Filter, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Dados de exemplo para demonstração
 const mockDocuments = [
@@ -50,22 +59,46 @@ const mockDocuments = [
   }
 ];
 
+// Extrair empresas e tipos únicos dos documentos
+const companies = [...new Set(mockDocuments.map(doc => doc.company))];
+const documentTypes = [...new Set(mockDocuments.map(doc => doc.type))];
+
 const DocumentsPage = () => {
   const navigate = useNavigate();
   const [documents] = useState(mockDocuments);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [companyFilter, setCompanyFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [dateSort, setDateSort] = useState("desc");
 
   // Funções de filtro
-  const filteredDocuments = documents.filter(doc => {
-    const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredDocuments = documents
+    .filter(doc => {
+      const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          doc.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          doc.type.toLowerCase().includes(searchTerm.toLowerCase());
                          
-    const matchesStatus = statusFilter === "all" || doc.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
+      const matchesStatus = statusFilter === "all" || doc.status === statusFilter;
+      const matchesCompany = companyFilter === "all" || doc.company === companyFilter;
+      const matchesType = typeFilter === "all" || doc.type === typeFilter;
+      
+      return matchesSearch && matchesStatus && matchesCompany && matchesType;
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateSort === "desc" ? dateB.getTime() - dateA.getTime() : dateA.getTime() - dateB.getTime();
+    });
+
+  // Função para limpar todos os filtros
+  const clearFilters = () => {
+    setStatusFilter("all");
+    setCompanyFilter("all");
+    setTypeFilter("all");
+    setDateSort("desc");
+    setSearchTerm("");
+  };
 
   // Função para navegar para a página de documentos específica
   const goToDocument = (id: number) => {
@@ -104,7 +137,7 @@ const DocumentsPage = () => {
           </div>
         </div>
 
-        {/* Search Bar */}
+        {/* Search Bar and Filters */}
         <div className="flex items-center space-x-2">
           <div className="relative flex-grow">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -115,9 +148,83 @@ const DocumentsPage = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Button variant="outline" size="icon">
-            <Filter className="h-4 w-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Filter className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>Filtros</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuGroup>
+                <div className="p-2">
+                  <label className="text-sm font-medium mb-1 block">Empresa</label>
+                  <Select value={companyFilter} onValueChange={setCompanyFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione uma empresa" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas</SelectItem>
+                      {companies.map((company) => (
+                        <SelectItem key={company} value={company}>
+                          {company}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </DropdownMenuGroup>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuGroup>
+                <div className="p-2">
+                  <label className="text-sm font-medium mb-1 block">Tipo de Documento</label>
+                  <Select value={typeFilter} onValueChange={setTypeFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione um tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      {documentTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </DropdownMenuGroup>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuGroup>
+                <div className="p-2">
+                  <label className="text-sm font-medium mb-1 block">Ordenar por Data</label>
+                  <Select value={dateSort} onValueChange={setDateSort}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Ordenar por" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="desc">Mais recentes primeiro</SelectItem>
+                      <SelectItem value="asc">Mais antigos primeiro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </DropdownMenuGroup>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem 
+                className="justify-center text-center cursor-pointer"
+                onClick={clearFilters}
+              >
+                Limpar Filtros
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Documents List */}
@@ -157,7 +264,7 @@ const DocumentsPage = () => {
                 </div>
               </div>
             ))
-          ) : (
+          ) :
             <div className="text-center py-8">
               <div className="mx-auto w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
                 <FileText className="h-6 w-6 text-gray-400" />
@@ -167,7 +274,7 @@ const DocumentsPage = () => {
                 Tente ajustar os filtros ou os termos de busca.
               </p>
             </div>
-          )}
+          }
         </div>
       </div>
     </AppLayout>
