@@ -10,15 +10,26 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  plugins: [
-    react(),
-    // Removendo a referência ao lovable-tagger
-    // mode === 'development' &&
-    // componentTagger(),
-  ].filter(Boolean),
+  plugins: [react()].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-    },
+    }
   },
+  optimizeDeps: {
+    include: ['jspdf', 'html2canvas']
+  },
+  build: {
+    commonjsOptions: {
+      include: [/jspdf/, /node_modules/],
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          jspdf: ['jspdf'],
+          html2canvas: ['html2canvas']
+        }
+      }
+    }
+  }
 }));
