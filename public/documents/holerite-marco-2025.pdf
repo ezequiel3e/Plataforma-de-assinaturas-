@@ -1,0 +1,98 @@
+%PDF-1.3
+%����
+
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/Resources <<
+/Font <<
+/F1 4 0 R 
+>>
+/ProcSet [/PDF /Text]
+>>
+/MediaBox [0 0 612 792]
+/Contents 6 0 R
+>>
+endobj
+
+4 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+
+6 0 obj
+<< /Length 676 >>
+stream
+BT
+/F1 24 Tf
+50 700 Td
+(Holerite - Março 2025) Tj
+/F1 12 Tf
+0 -50 Td
+(Empresa: Empresa A) Tj
+0 -20 Td
+(Funcionário: João Silva) Tj
+0 -20 Td
+(Cargo: Desenvolvedor) Tj
+0 -20 Td
+(Período: 01/03/2025 a 31/03/2025) Tj
+0 -40 Td
+(Salário Base: R$ 5.000,00) Tj
+0 -20 Td
+(Horas Extras: R$ 500,00) Tj
+0 -20 Td
+(Vale Refeição: R$ 600,00) Tj
+0 -20 Td
+(Vale Transporte: R$ 200,00) Tj
+0 -20 Td
+(INSS: R$ 550,00) Tj
+0 -20 Td
+(IRRF: R$ 650,00) Tj
+0 -40 Td
+(Total de Proventos: R$ 6.300,00) Tj
+0 -20 Td
+(Total de Descontos: R$ 1.200,00) Tj
+0 -20 Td
+(Valor Líquido: R$ 5.100,00) Tj
+0 -40 Td
+(Documento Assinado Digitalmente) Tj
+ET
+endstream
+endobj
+
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000254 00000 n 
+0000000321 00000 n 
+0000000322 00000 n 
+trailer
+<<
+/Size 7
+/Root 1 0 R
+>>
+startxref
+1049
+%%EOF 
